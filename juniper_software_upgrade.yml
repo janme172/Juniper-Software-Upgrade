@@ -15,11 +15,11 @@
 #      - import_tasks: tasks/actions/abort_if_1_RE.yml
 #    - import_tasks: tasks/show_gathered_config.yml
 
-   - block:
-     - name: Message of aborting in case of Single RE
-       debug:
-         msg: "Aborting the play for host {{ inventory_hostname }} as it has only one Routing engine. Remaining Tasks will get Skipped for this host."
-     when: not ansible_facts.junos.has_2RE
+    - block:
+      - name: Message of aborting in case of Single RE
+        debug:
+          msg: "Aborting the play for host {{ inventory_hostname }} as it has only one Routing engine. Remaining Tasks will get Skipped for this host."
+      when: not ansible_facts.junos.has_2RE
  
     - block:
       - import_tasks: tasks/jsnapy_tests_generator/validate_interface_status.yml
