@@ -1,4 +1,3 @@
-{% raw %}
 validate_interface_status:
 - command: show interfaces descriptions
 {% for interface_node in test_interface_nodes | default(['physical-interface', 'logical-interface'])  %}
@@ -7,10 +6,9 @@ validate_interface_status:
     xpath: interface_node
     tests:
     - is-equal: admin-status, {{ test_expected_admin_status | default('up') }}
-      err: 'The admin status of {{ interface_node }} {{ id_0 }} has changed: PRE: {{ pre["admin-status"] }} / POST: {{ post["admin-status"] }}'
-      info: 'Admin status have not changed for {{ interface_node }} {{ pre["admin-status"] }}.'
+      err: 'The admin status of {{ interface_node }} {% raw %} {{ id_0 }} has changed: PRE: {{ pre["admin-status"] }} / POST: {{ post["admin-status"] }}' {% endraw %}
+      info: 'Admin status have not changed for {{ interface_node }} {% raw %} {{ pre["admin-status"] }}.' {% endraw %}
     - is-equal: oper-status, {{ test_expected_oper_status | default('up') }}
-      err: 'The oper status of {{ interface_node }} {{ id_0 }} has changed: PRE: {{ pre["oper-status"] }} / POST: {{ post["oper-status"] }}'
-      info: 'Oper status have not changed for  {{ interface_node }} {{ pre["name"] }}.' 
+      err: 'The oper status of {{ interface_node }} {% raw %} {{ id_0 }} has changed: PRE: {{ pre["oper-status"] }} / POST: {{ post["oper-status"] }}' {% endraw %}
+      info: 'Oper status have not changed for  {{ interface_node }} {% endraw %} {{ pre["name"] }}.' {% endraw %}
 {% endfor %}
-{% endraw %}

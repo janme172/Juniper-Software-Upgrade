@@ -15,18 +15,7 @@
 #    - import_tasks: tasks/show_gathered_config.yml 
     - import_tasks: tasks/jsnapy_tests_generator/validate_interface_status.yml
 
-#    - name: Test against the conditions only
-#      juniper_junos_jsnapy:
-#        action: "snapcheck"
-#        test_files: jsnapy_tests/validations/validate_interface_admin_status.yml
-
-    - mail:
-        host: smtp.gmail.com
-        port: 587
-        username: "janme.ntpc@gmail.com"
-        password: "sapnaparmar"
-        to: jsin@tdc.dk
-        subject: Ansible-report
-        body: 'System has been successfully provisioned.'
-        attach: /jsnapy_tests/validations/validate_interface_status.yml
-      delegate_to: localhost
+    - name: Test against the conditions only
+      juniper_junos_jsnapy:
+        action: "snapcheck"
+        test_files: jsnapy_tests/validations/validate_interface_admin_status.yml
