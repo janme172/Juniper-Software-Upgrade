@@ -13,12 +13,12 @@
    gather_facts: no 
 
    tasks:
-    - name: Pre checks
-      juniper_junos_jsnapy:
-        action: "snap_pre"
-        config_file: "{{ jsnapy_test_file }}"
-        dir: "{{ jsnapy_dir }}"
-      register: response_pre
+#    - name: Pre checks
+#      juniper_junos_jsnapy:
+#        action: "snap_pre"
+#        config_file: "{{ jsnapy_test_file }}"
+#        dir: "{{ jsnapy_dir }}"
+#      register: response_pre
 #      when: pre_post_checks
 
 #    - name: print pre response
@@ -26,13 +26,13 @@
 #       var: response_pre
 #      when: pre_post_checks
 
-    - name: Post checks
-      juniper_junos_jsnapy:
-        action: "snap_post"
-        config_file: "{{ jsnapy_test_file }}"
-        dir: "{{ jsnapy_dir }}"
-      register: response_post
-      when: pre_post_checks
+#    - name: Post checks
+#      juniper_junos_jsnapy:
+#        action: "snap_post"
+#        config_file: "{{ jsnapy_test_file }}"
+#        dir: "{{ jsnapy_dir }}"
+#      register: response_post
+#      when: pre_post_checks
 
 #    - name: print post response
 #      debug:
