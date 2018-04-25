@@ -1,5 +1,5 @@
 ---
 - name: Abort if any only single RE
-    fail:
-      msg: "Only 1 Routing engine found. Aborting the software upgrade."
-    when: not ansible_facts.junos.has_2RE
+  fail:
+    msg: "Only 1 Routing engine found. Aborting the software upgrade."
+  when: not ansible_facts.junos.has_2RE
