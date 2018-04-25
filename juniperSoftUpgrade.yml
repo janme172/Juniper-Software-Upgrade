@@ -39,19 +39,19 @@
 #       var: response_post
 #      when: pre_post_checks
 
-    - name: compare checks
-      juniper_junos_jsnapy:
-        action: "check"
-        config_file: "{{ jsnapy_test_file }}"
-        dir: "{{ jsnapy_dir }}"
-      register: response_check
+#    - name: compare checks
+#      juniper_junos_jsnapy:
+#        action: "check"
+#        config_file: "{{ jsnapy_test_file }}"
+#        dir: "{{ jsnapy_dir }}"
+#      register: response_check
 #      when: pre_post_checks 
 
-#    - name: Test against the conditions only
-#      juniper_junos_jsnapy:
-#        action: "snapcheck"
-#        test_files: "jsnapy_tests/software_version.yml"
-#      register: response_check
+    - name: Test against the conditions only
+      juniper_junos_jsnapy:
+        action: "snapcheck"
+        test_files: "jsnapy_tests/software_version.yml"
+      register: response_check
 #      when: not pre_post_checks
 
     #- name: Verify all JSNAPy tests passed
