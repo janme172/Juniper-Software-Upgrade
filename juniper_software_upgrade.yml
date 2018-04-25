@@ -27,6 +27,6 @@
         password: sapnaparmar
         to: jsin@tdc.dk
         subject: Ansible-report
-        body: 'System {{ ansible_hostname }} has been successfully provisioned.'
+        body: 'System has been successfully provisioned.'
         attach: /jsnapy_tests/validations/validate_interface_status.yml
       delegate_to: localhost
