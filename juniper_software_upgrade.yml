@@ -21,4 +21,4 @@
           action: "snapcheck"
           test_files: jsnapy_tests/validations/validate_interface_admin_status.yml 
 #        test_files: jsnapy_tests/show_gbp_summary.yml
-      when: ansible_facts.junos.has_2RE == 'True' 
+#      when: ansible_facts.junos.has_2RE == 'True' 
