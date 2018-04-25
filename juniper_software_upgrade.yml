@@ -13,10 +13,10 @@
 #    - import_tasks: tasks/gather_facts_without_config.yml
 #    - import_tasks: tasks/abort_if_1_RE.yml
 #    - import_tasks: tasks/show_gathered_config.yml 
-#    - import_tasks: tasks/jsnapy_tests_generator/validate_interface_status.yml
+    - import_tasks: tasks/jsnapy_tests_generator/validate_interface_status.yml
 
     - name: Test against the conditions only
       juniper_junos_jsnapy:
         action: "snapcheck"
-#        test_files: jsnapy_tests/validations/validate_interface_admin_status.yml
-        test_files: jsnapy_tests/show_gbp_summary.yml
+        test_files: jsnapy_tests/validations/validate_interface_admin_status.yml
+"        test_files: jsnapy_tests/show_gbp_summary.yml
