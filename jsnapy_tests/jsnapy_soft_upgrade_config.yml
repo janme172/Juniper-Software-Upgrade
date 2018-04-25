@@ -1,0 +1,7 @@
+hosts:
+  - devices: 10.209.1.1 
+    username : abc
+    passwd: pqr
+tests:
+  - jsnapy_tests/show_interface_descriptions.yml 
+  - jsnapy_tests/show_gbp_summary.yml

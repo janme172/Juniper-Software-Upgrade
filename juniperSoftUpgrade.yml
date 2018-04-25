@@ -1,0 +1,65 @@
+---
+-  name: Exploring the jnsapy modules of ansible provided by Juniper
+   hosts: all
+   roles:
+     - Juniper.junos
+   vars:
+     #jsnapy_test_file: "jsnapy_tests/jsnapy_tests/jsnapy_soft_upgrade_config.yml"
+     pre_post_checks: true
+     jsnapy_test_file: "jsnapy_soft_upgrade_config.yml"
+     #jsnapy_dir: "/home/ansible/Automation/Ansible/jsnapy_module_tests/jsnapy_tests/"
+     jsnapy_dir: "jsnapy_tests/"
+   connection: local
+   gather_facts: no 
+
+   tasks:
+    - name: Pre checks
+      juniper_junos_jsnapy:
+        action: "snap_pre"
+        config_file: "{{ jsnapy_test_file }}"
+        dir: "{{ jsnapy_dir }}"
+      register: response_pre
+#      when: pre_post_checks
+
+#    - name: print pre response
+#      debug:
+#       var: response_pre
+#      when: pre_post_checks
+
+    - name: Post checks
+      juniper_junos_jsnapy:
+        action: "snap_post"
+        config_file: "{{ jsnapy_test_file }}"
+        dir: "{{ jsnapy_dir }}"
+      register: response_post
+      when: pre_post_checks
+
+#    - name: print post response
+#      debug:
+#       var: response_post
+#      when: pre_post_checks
+
+    - name: compare checks
+      juniper_junos_jsnapy:
+        action: "check"
+        config_file: "{{ jsnapy_test_file }}"
+        dir: "{{ jsnapy_dir }}"
+      register: response_check
+#      when: pre_post_checks 
+
+#    - name: Test against the conditions only
+#      juniper_junos_jsnapy:
+#        action: "snapcheck"
+#        test_files: "jsnapy_tests/software_version.yml"
+#      register: response_check
+#      when: not pre_post_checks
+
+    #- name: Verify all JSNAPy tests passed
+    #  debug:
+    #    msg: "{{ 100 - response_check.passPercentage }}% tests got failed. Please see the entire response for more details."
+    #  when: "response_check.passPercentage != 100"
+
+    #- name: print the final response
+    #  debug: 
+    #    var: response_check
+

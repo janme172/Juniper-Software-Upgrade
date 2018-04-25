@@ -1,0 +1,14 @@
+---
+- name: Playbook for upgrading the Junos Routers
+  hosts: all
+  connection: local
+  gather_facts: no
+  roles:
+    - Juniper.junos 
+  vars_prompt:
+    - name: juniper_junos_facts_config_format
+      prompt: "Please enter ther format for the device configuration(xml, json, set, text): "
+      default: xml      
+  tasks:
+    - import_tasks: tasks/gather_facts_without_config.yml
+#    - import_tasks: tasks/show_gathered_config.yml 

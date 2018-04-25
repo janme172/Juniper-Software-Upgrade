@@ -1,0 +1,4 @@
+---
+- name: Gather facts from Junos devices with configuration in provided format
+  juniper_junos_facts:
+    config_format: "{{ juniper_junos_facts_config_format }}"

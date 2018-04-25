@@ -1,0 +1,4 @@
+---
+- name: Shows the already gathered facts on screen
+  debug:
+    var: ansible_facts.junos
