@@ -10,5 +10,5 @@ validate_interface_status:
       info: 'Admin status have not changed for {{ interface_node }} {% raw %} {{ pre["admin-status"] }}.' {% endraw %}
     - is-equal: oper-status, {{ test_expected_oper_status | default('up') }}
       err: 'The oper status of {{ interface_node }} {% raw %} {{ id_0 }} has changed: PRE: {{ pre["oper-status"] }} / POST: {{ post["oper-status"] }}' {% endraw %}
-      info: 'Oper status have not changed for  {{ interface_node }} {% endraw %} {{ pre["name"] }}.' {% endraw %}
+      info: 'Oper status have not changed for  {{ interface_node }} {% raw %} {{ pre["name"] }}.' {% endraw %}
 {% endfor %}
