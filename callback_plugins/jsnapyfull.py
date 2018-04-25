@@ -90,10 +90,11 @@ class CallbackModule(CallbackBase):
             has_printed_test_name = False
             node_name = ''
             for testlet in test_results:
+                if len(testlet) == 1:
+                    continue
               	#self._display.display("4")
               	#if testlet['count']['fail'] != 0:
-                #test_name = testlet['test_name']
-                test_name = 'XXXXXXXX'
+                test_name = testlet['test_name']
                 failed_test_count = testlet['count']['fail']
                 passed_test_count = testlet['count']['pass']
                 if not has_printed_banner:
