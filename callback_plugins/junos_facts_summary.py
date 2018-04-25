@@ -34,7 +34,6 @@ class CallbackModule(CallbackBase):
     Collect test results for all tests executed if module is junos_jsnapy
     """
     self._display.display(str(result._result))
-    return
     #self._display.display("-----------Invoked v2_runner_on_ok----------------------")
     ## Extract module name
     module_name = ''
