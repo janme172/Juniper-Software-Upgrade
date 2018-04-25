@@ -4,3 +4,8 @@
     src: jinga2_templates/jsnapy/validations/validate_interface_admin_status.yml.j2
     dest: jsnapy_tests/validations/validate_interface_admin_status.yml
   delegate_to: localhost
+  register: xx
+
+- name: print
+  debug:
+    var: xx
