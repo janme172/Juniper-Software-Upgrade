@@ -44,18 +44,15 @@ class CallbackModule(CallbackBase):
         module_name = result._result['invocation']['module_name']
       module_args = result._result['invocation']['module_args']
 
-    ## Check if dic return has all valid information
-    #if module_name == '' or module_args == {}:                  # Commented because it is not coming in Juniper_junos_jsnapy module output
+    #if 'ansible_facts' not in module_args:
     #    return None
-    if 'ansible_facts' not in module_args:
-        return None
     ansible_facts = module_args['ansible_facts']
-    if 'junos' not in ansible_facts:
-        return
+    #if 'junos' not in ansible_facts:
+    #    return
     junos_dict = ansible_facts['junos']
 
-    if 'has_2RE' not in junos_dict:
-        return
+    #if 'has_2RE' not in junos_dict:
+    #    return
  
     junos_has_2RE = junos_dict['has_2RE']
     
