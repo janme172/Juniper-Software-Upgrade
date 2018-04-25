@@ -4,7 +4,7 @@ validate_interface_status:
 {% raw %}
 - iterate:
     id: name
-    xpath: {{ interface_node }}
+    xpath: {% endraw %}{{ interface_node }}{% raw %}
     tests:
     - is-equal: admin-status, {% endraw %} {{ test_expected_admin_status | default('up') }} {% raw %}
       err: 'The admin status of {% endraw %} {{ interface_node }} {% raw %} {{ id_0 }} is not up'
