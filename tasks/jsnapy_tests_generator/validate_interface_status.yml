@@ -1,0 +1,6 @@
+---
+- name: Generate the YML test template for interface validation on Juniper routers
+  template:
+    src: jinga2_templates/jsnapy/validations/validate_interface_admin_status.yml.j2
+    dest: jsnapy_tests/validations/validate_interface_admin_status.yml
+  delegate_to: localhost

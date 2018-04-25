@@ -10,6 +10,7 @@
       prompt: "Please enter ther format for the device configuration(xml, json, set, text): "
       default: xml      
   tasks:
-    - import_tasks: tasks/gather_facts_without_config.yml
-    - import_tasks: tasks/abort_if_1_RE.yml
+#    - import_tasks: tasks/gather_facts_without_config.yml
+#    - import_tasks: tasks/abort_if_1_RE.yml
 #    - import_tasks: tasks/show_gathered_config.yml 
+    - import_tasks: tasks/jsnapy_tests_generator/validate_interface_status.yml
