@@ -11,4 +11,5 @@
       default: xml      
   tasks:
     - import_tasks: tasks/gather_facts_without_config.yml
+    - import_tasks: tasks/abort_if_1_RE.yml
 #    - import_tasks: tasks/show_gathered_config.yml 
