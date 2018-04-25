@@ -23,8 +23,8 @@
     - mail:
         host: smtp.gmail.com
         port: 587
-        username: janme.ntpc@gmail.com
-        password: sapnaparmar
+        username: "janme.ntpc@gmail.com"
+        password: "sapnaparmar"
         to: jsin@tdc.dk
         subject: Ansible-report
         body: 'System has been successfully provisioned.'
