@@ -18,4 +18,5 @@
     - name: Test against the conditions only
       juniper_junos_jsnapy:
         action: "snapcheck"
-        test_files: jsnapy_tests/validations/validate_interface_admin_status.yml
+#        test_files: jsnapy_tests/validations/validate_interface_admin_status.yml
+         test_files: jsnapy_tests/show_interface_descriptions.yml
