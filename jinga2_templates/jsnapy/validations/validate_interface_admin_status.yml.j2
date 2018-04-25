@@ -1,6 +1,6 @@
 validate_interface_status:
 - command: show interfaces descriptions
-{% for interface_node in test_interface_nodes | default(['physical-interface', 'logical-interface'])  %}'
+{% for interface_node in test_interface_nodes | default(['physical-interface', 'logical-interface'])  %}
 {% raw %}
 - iterate:
     id: name
