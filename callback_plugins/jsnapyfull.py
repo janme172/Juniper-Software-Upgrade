@@ -92,7 +92,8 @@ class CallbackModule(CallbackBase):
             for testlet in test_results:
               	#self._display.display("4")
               	#if testlet['count']['fail'] != 0:
-                test_name = testlet['test_name']
+                #test_name = testlet['test_name']
+                test_name = 'XXXXXXXX'
                 failed_test_count = testlet['count']['fail']
                 passed_test_count = testlet['count']['pass']
                 if not has_printed_banner:
