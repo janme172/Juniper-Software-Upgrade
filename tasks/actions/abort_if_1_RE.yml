@@ -2,6 +2,5 @@
 - name: Abort if any only single RE
 #  fail:
 #    msg: "Only 1 Routing engine found. Aborting the software upgrade for device {{ inventory_hostname }}."
-  meta:
-    free_form: end_play
+  meta: end_play
   when: not ansible_facts.junos.has_2RE
