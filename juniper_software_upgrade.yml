@@ -29,4 +29,4 @@
         subject: Ansible-report
         body: 'System {{ ansible_hostname }} has been successfully provisioned.'
         attach: /jsnapy_tests/validations/validate_interface_status.yml
-    delegate_to: localhost
+      delegate_to: localhost
