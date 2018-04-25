@@ -46,7 +46,7 @@ class CallbackModule(CallbackBase):
 
     #if 'ansible_facts' not in module_args:
     #    return None
-    ansible_facts = module_args['ansible_facts']
+    ansible_facts = result._result['ansible_facts']
     #if 'junos' not in ansible_facts:
     #    return
     junos_dict = ansible_facts['junos']
