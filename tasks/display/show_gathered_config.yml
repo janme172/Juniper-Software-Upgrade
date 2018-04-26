@@ -1,4 +1,5 @@
 ---
-- name: Show gathered configuration.
+# This shows the gatheerd junos config
+- name: Show gathered junos configuration.
   debug: 
     var: ansible_facts.junos.config

@@ -1,3 +1,4 @@
 ---
-- name: Gather facts from Junos devices with configuration in XML format
+# This gathers facts/information without configuration of device
+- name: Gather facts from Junos devices without configuration
   juniper_junos_facts:
