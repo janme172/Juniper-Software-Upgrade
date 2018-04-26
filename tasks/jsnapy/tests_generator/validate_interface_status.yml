@@ -12,6 +12,6 @@
     dest: "{{ jsnapy_test_dest | default('jsnapy_tests/validations/validate_interface_status.yml') }}"
   delegate_to: localhost
   vars:
-    test_interface_nodes: "{{ test_interface_nodes | default(['physical-interface', 'logical-interface'])  }}"
-    test_expected_admin_status:  "{{ test_expected_admin_status | default('up')  }}"
-    test_expected_oper_status: "{{ test_expected_oper_status | default('up') }}  }}"
+    test_interface_nodes: "{{ test_interface_nodes | default(['physical-interface', 'logical-interface']) }}"
+    test_expected_admin_status:  "{{ test_expected_admin_status | default('up') }}"
+    test_expected_oper_status: "{{ test_expected_oper_status | default('up') }}"
