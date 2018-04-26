@@ -11,5 +11,5 @@ validate_interface_status:
       info: 'Admin status for {% endraw %} {{ interface_node }} {% raw %} {{ id_0 }} is "up".'
     - is-equal: oper-status, {% endraw %} {{ test_expected_oper_status | default('up') }} {% raw %}
       err: 'The oper status of {% endraw %} {{ interface_node }} {% raw %} {{ id_0 }} is not "up". It is "{{ pre["oper-status"] }}".'
-      info: 'Oper status for  {% endraw %} {{ interface_node }} {% raw %} {{ id_0 }}is "up"' {% endraw %}
+      info: 'Oper status for  {% endraw %} {{ interface_node }} {% raw %} {{ id_0 }} is "up"' {% endraw %}
 {% endfor %}
