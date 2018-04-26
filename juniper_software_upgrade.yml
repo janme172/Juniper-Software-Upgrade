@@ -20,9 +20,7 @@
     # Note: The condition/logic for skipping the remaining tasks is in next block. This block will not make the remaining tasks to skip.
     - block:
       # This Task print the abort message for single RE routers.
-      - import_tasks: tasks/display/message.yml 
-          message_to_display: "Aborting the play for host {{ inventory_hostname }} as it has only one Routing engine. Remaining Tasks will get Skipped for this host."
-          message_task_name: "Message for aborting in case of Single RE"
+      - import_tasks: tasks/display/message.yml  message_to_display="Aborting the play for host {{ inventory_hostname }} as it has only one Routing engine. Remaining Tasks will get Skipped for this host."  message_task_name="Message for aborting in case of Single RE"
       when: not ansible_facts.junos.has_2RE
  
     # This blocks continues the process of software upgrade for routers having 2 REs. 
