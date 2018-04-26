@@ -5,4 +5,4 @@
 - name: Test against the conditions only
   juniper_junos_jsnapy:
     action: "snapcheck"
-    test_files: "{{ jsnapy_test_files | desfault('jsnapy_tests/validations/validate_interface_status.yml') }}"
+    test_files: "{{ jsnapy_test_files | default('jsnapy_tests/validations/validate_interface_status.yml') }}"
