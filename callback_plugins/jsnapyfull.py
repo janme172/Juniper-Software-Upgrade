@@ -57,16 +57,16 @@ class CallbackModule(CallbackBase):
       host = result._host.name
       if not host in self._results.keys():
         self._results[host] = []
-
-      self._results[host].append(result)
+      self.print_test_result(host, result)
+      #self._results[host].append(result)
 
   def v2_playbook_on_stats(self, stats):
-    
+    pass
     #self._display.display("###################### CALLBACK INVOKED ##############################")
     #self._display.display(str(self._results.items()))
-
+  def print_test_result(host, result)
     ## Go over all results for all hosts
-    for host, results in iteritems(self._results):
+    #for host, results in iteritems(self._results):
       #self._display.display("1")
       #self._display.display("{}:\n {}\n".format(str(host), str(results)))
       has_printed_banner = False
