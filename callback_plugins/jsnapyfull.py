@@ -60,8 +60,7 @@ class CallbackModule(CallbackBase):
       self.print_test_result(host, result)
       #self._results[host].append(result)
 
-  def v2_playbook_on_stats(self, stats):
-    pass
+  #def v2_playbook_on_stats(self, stats):
     #self._display.display("###################### CALLBACK INVOKED ##############################")
     #self._display.display(str(self._results.items()))
   def print_test_result(self, host, results):
