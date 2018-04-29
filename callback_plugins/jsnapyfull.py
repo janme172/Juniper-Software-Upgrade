@@ -64,7 +64,7 @@ class CallbackModule(CallbackBase):
     pass
     #self._display.display("###################### CALLBACK INVOKED ##############################")
     #self._display.display(str(self._results.items()))
-  def print_test_result(host, result)
+  def print_test_result(host, result):
     ## Go over all results for all hosts
     #for host, results in iteritems(self._results):
       #self._display.display("1")
