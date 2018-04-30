@@ -36,18 +36,12 @@
       - import_tasks: tasks/juniper/jsnapy/validations/validate_interface_status.yml
       
       - import_tasks: tasks/juniper/jsnapy/tests_generator/check_interface_status.yml
-      - import_tasks: tasks/juniper/jsnapy/checks/check_interface_status.yml
-        vars:
-          jsnapy_test_files: jsnapy_tests/checks/check_interface_status.yml
-          jsnapy_test_action: 'pre'
-      - import_tasks: tasks/juniper/jsnapy/checks/check_interface_status.yml
-        vars:
-          jsnapy_test_files: jsnapy_tests/checks/check_interface_status.yml
-          jsnapy_test_action: 'post'
-      - import_tasks: tasks/juniper/jsnapy/checks/check_interface_status.yml
-        vars:
-          jsnapy_test_files: jsnapy_tests/checks/check_interface_status.yml
-          jsnapy_test_action: 'compare'
+
+      - import_tasks: tasks/juniper/jsnapy/checks/pre/check_interface_status.yml jsnapy_test_files=jsnapy_tests/checks/check_interface_status.yml
+
+      - import_tasks: tasks/juniper/jsnapy/checks/post/check_interface_status.yml jsnapy_test_files=jsnapy_tests/checks/check_interface_status.yml
+
+      - import_tasks: tasks/juniper/jsnapy/checks/check_interface_status.yml jsnapy_test_files=jsnapy_tests/checks/check_interface_status.yml
    
        
       when: ansible_facts.junos.has_2RE

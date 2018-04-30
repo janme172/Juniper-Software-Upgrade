@@ -1,9 +1,9 @@
 ---
-# This compares the pre and post snaps of the interfaces based on jsnapy test file
+# This takes the pre snap of the interfaces
 # it accepts following parameters: (parameter: default value)
 #     jsnapy_test_files: jsnapy_tests/checks/check_interface_status.yml
 #     jsnapy_task_name: 'No Name'
-- name: "Compare PRE and POST Snapshots - {{ jsnapy_task_name | default('No Name') }}"
+- name: "Take PRE Snapshot - {{ jsnapy_task_name | default('No Name') }}"
   juniper_junos_jsnapy:
-    action: "check"
+    action: "snap_pre"
     test_files: "{{ jsnapy_test_files | default('jsnapy_tests/checks/check_interface_status.yml') }}"
