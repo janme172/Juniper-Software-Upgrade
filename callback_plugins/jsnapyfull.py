@@ -36,7 +36,7 @@ class CallbackModule(CallbackBase):
     ## Extract module name
     module_name = ''
     module_args = {}
-    self._display.display(str(result._result))
+    #elf._display.display(str(result._result))
     if 'invocation' in result._result:
       if 'module_name' in result._result['invocation']:
         module_name = result._result['invocation']['module_name']
@@ -57,27 +57,26 @@ class CallbackModule(CallbackBase):
       host = result._host.name
       if not host in self._results.keys():
         self._results[host] = []
-      self._results[host].append(result)
-      self.print_test_result(host)
+      #self._results[host].append(result)
+      self.print_test_result(host, result)
 
   #def v2_playbook_on_stats(self, stats):
     #self._display.display("###################### CALLBACK INVOKED ##############################")
     #self._display.display(str(self._results.items()))
-  def print_test_result(self, host1):
+  def print_test_result(self, host, results):
     ## Go over all results for all hosts
-    for host, results in iteritems(self._results):
-      if host != host1:
-          continue
+    #for host, results in iteritems(self._results):
+    #  if host != host1:
+    #      continue
       #self._display.display("1")
       #self._display.display("{}:\n {}\n".format(str(host), str(results)))
       has_printed_banner = False
       for result in results:
         #self._display.display("2")
         #self._pp.pprint(result.__dict__)
-        res = result._result
+          res = result._result
         #if res['final_result'] == "Failed":
       
-        if True:
           test_status = "Unknown"
           try:
             test_status = res['final_result']
