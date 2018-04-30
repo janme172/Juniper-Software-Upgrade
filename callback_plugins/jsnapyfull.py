@@ -65,14 +65,14 @@ class CallbackModule(CallbackBase):
                 failed_test_count = testlet['count']['fail']
                 passed_test_count = testlet['count']['pass']
                 node_name = testlet['node_name']
+                test_operation = testlet['testoperation']
+                xpath = testlet['xpath']
                 try:
                     expected_node_value = testlet['expected_node_value']
                 except:
-                    expected_node_value = False
-                test_operation = testlet['testoperation']
-                xpath = testlet['xpath']
+                    expected_node_value = ''
                 if not has_printed_banner:
-                  self._display.banner("JSNAPy Results for Device: {}".format(host), color='bright purple')
+                  self._display.banner("JSNAPy Results for Device: {}".format(host), color='purple')
                   has_printed_banner = True
                 if not has_printed_test_name:
 	            self._display.display("Test name: {}".format(test_name))
@@ -84,25 +84,32 @@ class CallbackModule(CallbackBase):
                 self._display.display("\tPassed: {0}".format(passed_test_count))
                 if passed_test_count != 0:
                     for test in testlet['passed']:
+                        if test_operation.lower() == 'is-equal':
+                           custom_message = "'{2}/{0}'s/es are equal to '{1}'".format(node_name, expected_node_value, xpath)
+                        elif test_operation.lower() == 'no-diff':
+                           custom_message = "'{2}/{0}'s/es are same in PRE and POST snapshots at '{2}'".format(node_name, expected_node_value, xpath)
+                        elif test_operation.lower() == 'list-not-less':
+                           custom_message = "'{1}/{0}'s/es present in POST Snapshot are also present in PRE Snapshot".format(node_name, xpath)
+                        elif test_operation.lower() == 'list-not-more':
+                           custom_message = "'{1}/{0}'s/es present in PRE Snapshot are also present in POST Snapshot".format(node_name, xpath)
+                        elif test_operation.lower() == 'delta':
+                           custom_message = "''{1}/{0}' value changes were within defined thresholds between PRE and POST Snapshot".format(node_name, xpath)
+                        else:
+                           custom_message =  "'{0}' '{1}' at '{2}'".format(node_name, test_operation, xpath)
                         data = ''
-                        if 'post' in test:
-                            data = test['post']
+                        #if 'post' in test:
+                        #    data = test['post']
+                        #else:
+                        #    data = test
+                        #try:
+                        #    pass_message = test['message']
+                        #except:
+                        #    pass_message = "Value of '{0}' '{1}' at '{2}'".format(node_name, test_operation, xpath)
+                        
+                        if  failed_test_count == 0:
+                                pass_message = "All {0}. [{1} matched]".format(custom_message, passed_test_count)
                         else:
-                            data = test
-                        try:
-                            pass_message = test['message']
-                        except:
-                            pass_message = "Value of '{0}' '{1}' at '{2}'".format(str(testlet['node_name']), str(testlet['testoperation']), str(testlet['xpath']))
-                        if  len(testlet['failed']) == 0:
-                            if expected_node_value:
-                                pass_message = "All '{0}' '{1}' '{4}' at '{2}'. [{3} matched]".format(node_name, test_operation, xpath, passed_test_count, expected_node_value)
-                            else:
-                                pass_message = "All '{0}' '{1}' at '{2}'. [{3} matched]".format(node_name, test_operation, xpath, passed_test_count)
-                        else:
-                            if expected_node_value:
-                                pass_message = "'{0}' '{1}' at '{4}' '{2}'. [{3} matched]".format(node_name, test_operation, xpath, passed_test_count, expected_node_value)
-                            else:
-                                pass_message = "'{0}' '{1}' at '{2}'. [{3} matched]".format(node_name, test_operation, xpath, passed_test_count)
+                                pass_message = "{0}. [{1} matched]".format(custom_message, passed_test_count)
                     
                     self._display.display("\tPass: {0}".format(pass_message), color='green')
                   
@@ -115,10 +122,14 @@ class CallbackModule(CallbackBase):
                             data = test['post']
                         else:
                             data = test
+                        if test_operation.lower() == 'list-not-more':
+                            test_operation = '[Missing before]'
+                        elif test_operation.lower() == 'list-not-less':
+                            test_operation = '[Available now]'
                         try:
                             fail_message = test['message']
                         except:
-                            fail_message = "Value of '{0}' not '{1}' at '{2}' with {3}".format(str(testlet['node_name']), str(testlet['testoperation']), str(testlet['xpath']), json.dumps(data))
+                            fail_message = "Value of '{0}' not '{1}' at '{2}' with {3}".format(node_name, test_operation, xpath, json.dumps(data))
                         self._display.display("\tFail: {0}".format(fail_message), color=C.COLOR_ERROR)
 #                  self._display.display("\t\tAnsible Output: Value of '{0}' not '{1}' at '{2}' with {3}".format(str(testlet['node_name']), str(testlet['testoperation']), str(testlet['xpath']), json.dumps(data)), color=C.COLOR_ERROR)
 
