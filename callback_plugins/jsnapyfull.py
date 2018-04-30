@@ -72,7 +72,7 @@ class CallbackModule(CallbackBase):
       #self._display.display("1")
       self._display.display("{0}\n\n{1}".format(str(host), str(results)))
       has_printed_banner = False
-      for result in iteritems(results):
+      for result in enumerate(results):
         #self._display.display("2")
         #self._pp.pprint(result.__dict__)
           res = result._result
