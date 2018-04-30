@@ -1,0 +1,22 @@
+---
+# This compares the pre and post snaps of the interfaces againts the conditions in test file
+# it accepts following parameters: (parameter: default value)
+#     jsnapy_test_files: jsnapy_tests/validations/validate_interface_status.yml
+#     jsnapy_test_action: compare
+#     jsnapy_task_name: 'No Name'
+- block:
+  - name: "Take PRE Snapshot - {{ jsnapy_task_name | default('No Name') }}"
+    juniper_junos_jsnapy:
+      action: "snap_pre"
+      test_files: "{{ jsnapy_test_files | default('jsnapy_tests/checks/check_interface_status.yml') }}"
+    when: jsnapy_test_action == 'pre'
+  - name: "Take POST snapshot - {{ jsnapy_task_name | default('No Name') }}"
+    juniper_junos_jsnapy:
+      action: "snap_post"
+      test_files: "{{ jsnapy_test_files | default('jsnapy_tests/checks/check_interface_status.yml') }}"
+    when: jsnapy_test_action == 'post'
+  - name: "Compare PRE and POST Snapshots - {{ jsnapy_task_name | default('No Name') }}"
+    juniper_junos_jsnapy:
+      action: "check"
+      test_files: "{{ jsnapy_test_files | default('jsnapy_tests/checks/check_interface_status.yml') }}"
+    when: jsnapy_test_action == 'compare' or jsnapy_test_action is undefined or jsnapy_test_action == ''
