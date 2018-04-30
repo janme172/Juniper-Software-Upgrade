@@ -54,22 +54,23 @@ class CallbackModule(CallbackBase):
     if module_name in ('juniper_junos_jsnapy', 'junos_jsnapy', '') and (module_args['action'] in ('snapcheck', 'check')):
 
       ## Check if dict entry already exist for this host
-      host = result._host.name
-      if not host in self._results.keys():
-        self._results[host] = []
+      #host = result._host.name
+      #if not host in self._results.keys():
+      #  self._results[host] = []
       #self._results[host].append(result)
       self.print_test_result(host, result)
 
   #def v2_playbook_on_stats(self, stats):
     #self._display.display("###################### CALLBACK INVOKED ##############################")
     #self._display.display(str(self._results.items()))
-  def print_test_result(self, host, results):
+  def print_test_result(self, results):
+      host = result._host.name
     ## Go over all results for all hosts
     #for host, results in iteritems(self._results):
     #  if host != host1:
     #      continue
       #self._display.display("1")
-      #self._display.display("{}:\n {}\n".format(str(host), str(results)))
+      self._display.display("{0}\n\n{1}".format(str(host), str(results)))
       has_printed_banner = False
       for result in results:
         #self._display.display("2")
