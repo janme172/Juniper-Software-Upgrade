@@ -72,54 +72,54 @@ class CallbackModule(CallbackBase):
                 test_operation = testlet['testoperation']
                 xpath = testlet['xpath']
                 if not has_printed_banner:
-                  self._display.banner("JSNAPy Results for Device: {}".format(host))
+                  self._display.banner("JSNAPy Results for Device: {}".format(host), color='bright purple')
                   has_printed_banner = True
                 if not has_printed_test_name:
 	            self._display.display("Test name: {}".format(test_name))
+                    self._display.display("Command/RPC: {}".format(command_or_rpc))
                     has_printed_test_name = True
                 node_name = testlet['node_name']
                 self._display.display("\tNode name: {0}".format(node_name))
                 self._display.display("\tFailed: {0}".format(failed_test_count))
                 self._display.display("\tPassed: {0}".format(passed_test_count))
-                for test in testlet['passed']:
-                  data = ''
-                  if 'post' in test:
-                      data = test['post']
-                  else:
-                      data = test
-                  try:
-                    pass_message = test['message']
-                  except:
-                    pass_message = "Value of '{0}' '{1}' at '{2}'".format(str(testlet['node_name']), str(testlet['testoperation']), str(testlet['xpath']))
-                if  len(testlet['failed']) == 0:
-                    if expected_node_value:
-                        pass_message = "All '{0}' '{1}' '{4}' at '{2}'. [{3} matched]".format(node_name, test_operation, xpath, passed_test_count, expected_node_value)
-                    else:
-                        pass_message = "All '{0}' '{1}' at '{2}'. [{3} matched]".format(node_name, test_operation, xpath, passed_test_count)
-                else:
-                    if expected_node_value:
-                        pass_message = "'{0}' '{1}' at '{4}' '{2}'. [{3} matched]".format(node_name, test_operation, xpath, passed_test_count, expected_node_value)
-                    else:
-                        pass_message = "'{0}' '{1}' at '{2}'. [{3} matched]".format(node_name, test_operation, xpath, passed_test_count)
-
-                self._display.display("\tPass: {0}".format(pass_message), color='green')
+                if passed_test_count != 0:
+                    for test in testlet['passed']:
+                        data = ''
+                        if 'post' in test:
+                            data = test['post']
+                        else:
+                            data = test
+                        try:
+                            pass_message = test['message']
+                        except:
+                            pass_message = "Value of '{0}' '{1}' at '{2}'".format(str(testlet['node_name']), str(testlet['testoperation']), str(testlet['xpath']))
+                        if  len(testlet['failed']) == 0:
+                            if expected_node_value:
+                                pass_message = "All '{0}' '{1}' '{4}' at '{2}'. [{3} matched]".format(node_name, test_operation, xpath, passed_test_count, expected_node_value)
+                            else:
+                                pass_message = "All '{0}' '{1}' at '{2}'. [{3} matched]".format(node_name, test_operation, xpath, passed_test_count)
+                        else:
+                            if expected_node_value:
+                                pass_message = "'{0}' '{1}' at '{4}' '{2}'. [{3} matched]".format(node_name, test_operation, xpath, passed_test_count, expected_node_value)
+                            else:
+                                pass_message = "'{0}' '{1}' at '{2}'. [{3} matched]".format(node_name, test_operation, xpath, passed_test_count)
+                    
+                    self._display.display("\tPass: {0}".format(pass_message), color='green')
                   
 #                 self._display.display("\t\tAnsible Output: Value of '{0}' '{1}' at '{2}' with {3}".format(str(testlet['node_name']), str(testlet['testoperation']), str(testlet['xpath']), json.dumps(data)), color='green')
 
-
-                for test in testlet['failed']:
-                  data = ''
-                  if 'post' in test:
-                      data = test['post']
-                  else:
-                      data = test
-                  try:
-                    fail_message = test['message']
-                  except:
-                    fail_message = "Value of '{0}' not '{1}' at '{2}' with {3}".format(str(testlet['node_name']), str(testlet['testoperation']), str(testlet['xpath']), json.dumps(data))
-                  self._display.display(
-                    "\tFail: {0}".format(fail_message), color=C.COLOR_ERROR
-                  )
+                if failed_test_count != 0: 
+                    for test in testlet['failed']:
+                        data = ''
+                        if 'post' in test:
+                            data = test['post']
+                        else:
+                            data = test
+                        try:
+                            fail_message = test['message']
+                        except:
+                            fail_message = "Value of '{0}' not '{1}' at '{2}' with {3}".format(str(testlet['node_name']), str(testlet['testoperation']), str(testlet['xpath']), json.dumps(data))
+                        self._display.display("\tFail: {0}".format(fail_message), color=C.COLOR_ERROR)
 #                  self._display.display("\t\tAnsible Output: Value of '{0}' not '{1}' at '{2}' with {3}".format(str(testlet['node_name']), str(testlet['testoperation']), str(testlet['xpath']), json.dumps(data)), color=C.COLOR_ERROR)
 
 

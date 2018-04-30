@@ -36,13 +36,28 @@
       - import_tasks: tasks/juniper/jsnapy/validations/validate_interface_status.yml
       
       - import_tasks: tasks/juniper/jsnapy/tests_generator/check_interface_status.yml
+      
+      - import_tasks: tasks/juniper/jsnapy/checks/pre/checks.yml 
+        vars:
+          jsnapy_test_files: [check_interface_status.yml, check_isis.yml]
+          jsnapy_task_name: "interface, isis" 
+          jsnapy_test_dir: "jsnapy_tests/checks/"
 
-      - import_tasks: tasks/juniper/jsnapy/checks/pre/check_interface_status.yml jsnapy_test_files=jsnapy_tests/checks/check_interface_status.yml
+      - import_tasks: tasks/juniper/jsnapy/checks/post/checks.yml
+        vars:
+          jsnapy_test_files: [check_interface_status.yml, check_isis.yml]
+          jsnapy_task_name: "interface, isis"
+          jsnapy_test_dir: "jsnapy_tests/checks/"
 
-      - import_tasks: tasks/juniper/jsnapy/checks/post/check_interface_status.yml jsnapy_test_files=jsnapy_tests/checks/check_interface_status.yml
 
-      - import_tasks: tasks/juniper/jsnapy/checks/check_interface_status.yml jsnapy_test_files=jsnapy_tests/checks/check_interface_status.yml
+      - import_tasks: tasks/juniper/jsnapy/checks/checks.yml
+        vars:
+          jsnapy_test_files: [check_interface_status.yml, check_isis.yml]
+          jsnapy_task_name: "interface, isis"
+          jsnapy_test_dir: "jsnapy_tests/checks/"
+
    
+      
        
       when: ansible_facts.junos.has_2RE
       
