@@ -58,7 +58,7 @@ class CallbackModule(CallbackBase):
       #if not host in self._results.keys():
       #  self._results[host] = []
       #self._results[host].append(result)
-      self.print_test_result(host, result)
+      self.print_test_result(result)
 
   #def v2_playbook_on_stats(self, stats):
     #self._display.display("###################### CALLBACK INVOKED ##############################")
