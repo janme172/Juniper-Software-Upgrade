@@ -36,18 +36,20 @@
       - import_tasks: tasks/juniper/jsnapy/validations/validate.yml
         vars:
           jsnapy_test_files: [validate_interface_status.yml]
-          jsnapy_task_name: "interface(oper and admin) status"
+          jsnapy_task_name: "interface(oper and admin) status are up"
           jsnapy_test_dir: "jsnapy_tests/validations/"
       
       #- import_tasks: tasks/juniper/jsnapy/tests_generator/check_interface_status.yml
       - block:
         - import_tasks: tasks/juniper/jsnapy/checks/pre/checks.yml 
-
+          
         - import_tasks: tasks/juniper/jsnapy/checks/post/checks.yml
+          
 
         - import_tasks: tasks/juniper/jsnapy/checks/checks.yml
         vars:
           jsnapy_test_files: [check_interface_status.yml, check_isis.yml, check_bgp.yml]
+          #jsnapy_test_files: [check_bgp.yml]
           jsnapy_task_name: "interface, isis, bgp"
           jsnapy_test_dir: "jsnapy_tests/checks/"
         

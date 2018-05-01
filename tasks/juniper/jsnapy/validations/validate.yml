@@ -4,7 +4,7 @@
 #     jsnapy_test_files: validate_interface_status.yml
 #     jsnapy_task_name: No Name
 #     jsnapy_test_dir: jsnapy_tests/validations/
-- name: "Compare Pre and Post Snapshots - {{ jsnapy_task_name | default('No Name') }}"
+- name: "Validate - {{ jsnapy_task_name | default('No Name') }}"
   juniper_junos_jsnapy:
     action: "snapcheck"
     test_files: "{{ jsnapy_test_files | default('validate_interface_status.yml') }}"
