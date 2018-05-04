@@ -865,7 +865,8 @@ class JuniperJunosModule(AnsibleModule):
                 return '[%s] %s' % (self.extra['host'], msg), kwargs
 
         # Default level to log.
-        level = logging.WARNING
+        #level = logging.WARNING
+        level = logging.INFO
         # Log more if ANSIBLE_DEBUG or -v[v] is set.
         if self._debug is True:
             level = logging.DEBUG

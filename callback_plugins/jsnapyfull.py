@@ -26,6 +26,7 @@ class CallbackModule(CallbackBase):
     super(CallbackModule, self).__init__()
 
   def v2_runner_on_ok(self, result):
+    return
     """
     Collect test results for all tests executed if module is junos_jsnapy
     """
@@ -72,8 +73,9 @@ class CallbackModule(CallbackBase):
                 except:
                     expected_node_value = ''
                 if not has_printed_banner:
-                  self._display.banner("JSNAPy Results for Device: {}".format(host), color='purple')
-                  has_printed_banner = True
+#                   self._display.banner("JSNAPy Results for Device: {}".format(host), color='purple')
+                    self._display.display("JSNAPy Results for Device: {:#^200}".format(host))
+                    has_printed_banner = True
                 if not has_printed_test_name:
 	            self._display.display("Test name: {}".format(test_name))
                     self._display.display("Command/RPC: {}".format(command_or_rpc))
@@ -93,7 +95,9 @@ class CallbackModule(CallbackBase):
                         elif test_operation.lower() == 'list-not-more':
                            custom_message = "'{1}/{0}'s/es present in PRE Snapshot are also present in POST Snapshot".format(node_name, xpath)
                         elif test_operation.lower() == 'delta':
-                           custom_message = "''{1}/{0}' value changes were within defined thresholds between PRE and POST Snapshot".format(node_name, xpath)
+                           custom_message = "'{1}/{0}' value changes were within defined thresholds between PRE and POST Snapshot".format(node_name, xpath)
+                        elif test_operation.lower() == 'all-same':
+                           custom_message = "'{1}/{0}' values are same".format(node_name, xpath)
                         else:
                            custom_message =  "'{0}' '{1}' at '{2}'".format(node_name, test_operation, xpath)
                         data = ''

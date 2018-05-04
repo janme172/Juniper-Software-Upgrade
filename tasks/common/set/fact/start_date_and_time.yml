@@ -1,0 +1,7 @@
+---
+# Set the Start of play date and time variables
+- name: Set the play start date and time variables
+  set_fact:
+    play_start_date: "{{ lookup('pipe', 'date +%m-%d-%Y') }}"
+    play_start_time: "{{ lookup('pipe', 'date +%H%M%S') }}"
+

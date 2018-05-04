@@ -9,3 +9,4 @@
     action: "snap_post"
     test_files: "{{ jsnapy_test_files | default('check_interface_status.yml') }}"
     dir: "{{ jsnapy_test_dir | default('jsnapy_tests/checks/') }}"
+    logdir: "{{ jsnapy_log_dir |  default('logs/jsnapy/checks/') }}"

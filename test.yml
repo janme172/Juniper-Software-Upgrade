@@ -1,0 +1,44 @@
+---
+- name: Playbook for upgrading the Juniper Routers
+  hosts: test2nqe30
+  max_fail_percentage: 100
+  connection: local
+  gather_facts: no
+  # include the customized junos role
+  roles:
+    - Juniper.junos
+  # Pre configurations tasks
+  pre_tasks:
+    - block:
+        # Set the Start of play date and time variables
+        - import_tasks: tasks/common/set/fact/start_date_and_time.yml
+      rescue:
+        # Alert user about abort of play as únable to set the date and time variables.
+        - import_tasks: tasks/common/action/abort.yml
+          vars:
+            abort_message: "Aborting the play for host {{ inventory_hostname }} as unable to set date and time variables."
+            abort_task_name: "Date and Time variables not set."
+  # Creating and setting some initial variables.
+  vars:
+    jsnapy_parent_test_dir: "jsnapy_tests"
+    logs_parent_directory: "/home/ansible/Logs/RouterSoftwareUpgrade/{{ play_start_date }}_{{ play_start_time }}"
+    jsnapy_parent_log_dir: "{{ logs_parent_directory }}/jsnapy"
+    jsnapy_validations_dir: "{{ jsnapy_parent_log_dir }}/validations"
+    jsnapy_validations_pre_dir: "{{ jsnapy_validations_dir }}/pre"
+    jsnapy_validations_post_dir: "{{ jsnapy_validations_dir }}/post"
+    jsnapy_checks_dir: "{{ jsnapy_parent_log_dir }}/checks"
+    jsnapy_checks_pre_dir: "{{ jsnapy_checks_dir }}/pre"
+    jsnapy_checks_post_dir: "{{ jsnapy_checks_dir }}/post"
+    jsnapy_checks_compare_dir: "{{ jsnapy_checks_dir }}/compare"
+    log_plays_dir: "{{ logs_parent_directory }}/play"
+  # All Tasks
+  tasks:
+    - name: testing the command module
+      juniper_junos_command:
+        commands: 
+          - "request routing-engine login backup"
+      register: command_response
+
+    - name: Print the response
+      debug:
+        var: command_response

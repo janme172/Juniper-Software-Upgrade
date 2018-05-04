@@ -1,0 +1,4 @@
+---
+- name: "Aborting - {{ abort_task_name | default('play for host'+ inventory_hostname) }}"
+  fail:
+    msg: "{{ abort_message | default('Oops!!!. No message to display.') }}"

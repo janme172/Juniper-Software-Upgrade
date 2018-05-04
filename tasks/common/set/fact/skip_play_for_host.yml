@@ -1,0 +1,4 @@
+---
+- name: Set the play start date and time variables
+  set_fact:
+    skip_play_for_host: True
