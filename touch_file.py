@@ -8,6 +8,9 @@ f = sftp.open("/home/ansible/Logs/RouterSoftwareUpgrade/janme_test.log", "w")
 f.write("hello,world")
 f.close()
 
+with open('/tmp/Touch_test_file.log', 'w') as f:
+    f.write('Janmejay')
 
-#with open('/tmp/Touch_test_file.log', 'w') as f:
-#    f.write('Janmejay')
+
+sftp.put('/tmp/Touch_test_file.log', '/home/ansible/Logs/RouterSoftwareUpgrade/')
+

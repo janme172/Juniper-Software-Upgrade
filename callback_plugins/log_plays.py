@@ -44,10 +44,10 @@ class CallbackModule(CallbackBase):
 #    CALLBACK_NEEDS_WHITELIST = True
 
     TIME_FORMAT = "%b %d %Y %H:%M:%S"
-    MSG_FORMAT = "Task Name: %(task_name)s\n %(now)s - %(category)s - %(data)s\n\n"
+    MSG_FORMAT = "Task Name: %(task_name)s\nTimestamp: %(now)s\nTask Status:%(category)s\n%(data)s\n"
 
     def __init__(self):
-        self._parent_log_path = '/home/ansible/Logs/RouterSoftwareUpgrade/'
+        self._parent_log_path = '/home/ansible/Logs/RouterSoftwareUpgrade/logs/'
         super(CallbackModule, self).__init__()
 
         if not os.path.exists(self._parent_log_path):
@@ -67,11 +67,13 @@ class CallbackModule(CallbackBase):
 
         path = os.path.join(self._parent_log_path, host)
         now = time.strftime(self.TIME_FORMAT, time.localtime())
-
+        
         msg = to_bytes(self.MSG_FORMAT % dict(now=now, category=category, data=data, task_name=self.task_name))
         #msg = to_bytes( "Task Name: %()%(now)s - %(data)s\n\n" % dict(now=now, data=data))
         with open(path, "ab") as fd:
+            fd.write('#####-----Task Start-----#####\n')
             fd.write(msg)
+            fd.write('#####-----Task End-----#####\n')
 
     def v2_playbook_on_task_start(self, task, is_conditional):
         self.task_name = task.get_name()
