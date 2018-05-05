@@ -1,5 +1,5 @@
 ---
-- name: Playbook for upgrading the Juniper Routers
+- name: Playbook for RE Switchover
   hosts: all
   max_fail_percentage: 100
   connection: local
@@ -8,16 +8,17 @@
   roles:
     - Juniper.junos
   # Pre configurations tasks
-  pre_tasks:
-    - block:
-        # Set the Start of play date and time variables
-        - import_tasks: tasks/common/set/fact/start_date_and_time.yml
-      rescue:
-        # Alert user about abort of play as únable to set the date and time variables.
-        - import_tasks: tasks/common/action/abort.yml
-          vars:
-            abort_message: "Aborting the play for host {{ inventory_hostname }} as unable to set date and time variables."
-            abort_task_name: "Date and Time variables not set."
+  # Commented because logging is still pending.
+#  pre_tasks:
+#    - block:
+#        # Set the Start of play date and time variables
+#        - import_tasks: tasks/common/set/fact/start_date_and_time.yml
+#      rescue:
+#        # Alert user about abort of play as únable to set the date and time variables.
+#        - import_tasks: tasks/common/action/abort.yml
+#          vars:
+#            abort_message: "Aborting the play for host {{ inventory_hostname }} as unable to set date and time variables."
+#            abort_task_name: "Date and Time variables not set."
   # Creating and setting some initial variables.
   vars:
     jsnapy_parent_test_dir: "jsnapy_tests"
@@ -36,30 +37,30 @@
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # BLOCK A - Creates the required log directories.
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    - block:
-        # Create the required log directories
-        - name: Create the log directories
-          file:
-            path: "{{ item }}"
-            state: directory
-          loop:
-            - "{{ logs_parent_directory }}"
-            - "{{ jsnapy_validations_dir }}"
-            - "{{ jsnapy_validations_pre_dir }}"
-            - "{{ jsnapy_validations_post_dir }}"
-            - "{{ jsnapy_checks_dir }}"
-            - "{{ jsnapy_checks_pre_dir }}"
-            - "{{ jsnapy_checks_post_dir }}"
-            - "{{ jsnapy_checks_compare_dir }}"
-            - "{{ log_plays_dir }}"
-          delegate_to: localhost
-          run_once: yes
-      rescue:
-        # Alert user about abort of play as únable create log directories.
-        - import_tasks: tasks/common/action/abort.yml
-          vars:
-            abort_message: "Aborting the play for host {{ inventory_hostname }} as there was issue while creating log directories."
-            abort_task_name: "Issue in log directories creation."
+#    - block:
+#        # Create the required log directories
+#        - name: Create the log directories
+#          file:
+#            path: "{{ item }}"
+#            state: directory
+#          loop:
+#            - "{{ logs_parent_directory }}"
+#            - "{{ jsnapy_validations_dir }}"
+#            - "{{ jsnapy_validations_pre_dir }}"
+#            - "{{ jsnapy_validations_post_dir }}"
+#            - "{{ jsnapy_checks_dir }}"
+#            - "{{ jsnapy_checks_pre_dir }}"
+#            - "{{ jsnapy_checks_post_dir }}"
+#            - "{{ jsnapy_checks_compare_dir }}"
+#            - "{{ log_plays_dir }}"
+#          delegate_to: localhost
+#          run_once: yes
+#      rescue:
+#        # Alert user about abort of play as únable create log directories.
+#        - import_tasks: tasks/common/action/abort.yml
+#          vars:
+#            abort_message: "Aborting the play for host {{ inventory_hostname }} as there was issue while creating log directories."
+#            abort_task_name: "Issue in log directories creation."
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -84,7 +85,9 @@
       when: not ansible_facts.junos.has_2RE
 
 
-    
+    - name: Get the Master RE before RE Switchover
+      set_fact:
+        master_re_before_switchover: "{{ ansible_facts.junos.master }}"    
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # BLOCK C - Continue RE Swicthover process only for dual RE devices.
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -129,7 +132,7 @@
 #              message_to_display: "For host {{ inventory_hostname }} there was an issue in RE switchover. Unexpected response recieved. Post checks and validations will continue."
 #              message_task_name: "Message for issue in RE Switchover"
       #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+      
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       # BLOCK C-3 - Wait for router connectivity after RE Switchover.
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -155,6 +158,18 @@
           # Gather the router facts/info after. No configuration data will be gathered.
           - import_tasks: tasks/juniper/facts/gather_facts_without_config.yml
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+      - name: Get the Master RE after RE Switchover
+        set_fact:
+          master_re_after_switchover: "{{ ansible_facts.junos.master }}"
+
+
+      - name: Check if RE has changed
+        assert:
+          that:
+            - "master_re_after_switchover != master_re_before_switchover"
+            - "'RE' in master_re_after_switchover"
+          msg: "RE Switchover failed for device '{{ inventory_hostname }}'"
 
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       # BLOCK C-5 - Gather Facts again to see if RE Switchover was successfull.

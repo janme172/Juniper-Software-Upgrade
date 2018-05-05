@@ -1,0 +1,9 @@
+---
+- name: Playbook for RE Switchover
+  hosts: localhost
+  max_fail_percentage: 100
+  tasks:
+    - name: testing python file
+      command: "python touch_file.py"
+
+

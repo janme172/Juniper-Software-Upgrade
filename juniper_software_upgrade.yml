@@ -1,46 +1,50 @@
 ---
-- name: Playbook for upgrading the Junos Routers
+- name: Playbook for RE Switchover
   hosts: all
+  max_fail_percentage: 100
   connection: local
   gather_facts: no
+  # include the customized junos role
   roles:
     - Juniper.junos
+  # Pre configurations tasks
+  # Commented because logging is still pending.
   pre_tasks:
     - block:
         # Set the Start of play date and time variables
         - import_tasks: tasks/common/set/fact/start_date_and_time.yml
       rescue:
         # Alert user about abort of play as únable to set the date and time variables.
-        - import_tasks: tasks/common/display/message.yml
-        vars:
-          message_to_display: "Aborting the play for host {{ inventory_hostname }} as unable to set date and time variables."
-          message_task_name: "Message for aborting."
-        # Set the fact [skip_play_for_host] to be used for skipping remaining tasks
-        - import_tasks: tasks/common/set/fact/skip_play_for_host.yml
-        
-      
+        - import_tasks: tasks/common/action/abort.yml
+          vars:
+            abort_message: "Aborting the play for host {{ inventory_hostname }} as unable to set date and time variables."
+            abort_task_name: "Date and Time variables not set."
+ # Creating and setting some initial variables.
   vars:
-    jsnapy_parent_log_dir: "/home/ansible/Logs/RouterSoftwareUpgrade/jsnapy"
     jsnapy_parent_test_dir: "jsnapy_tests"
-    jsnapy_run_parent_logdir: "{{ jsnapy_parent_log_dir }}/{{ play_start_date }}_{{ play_start_time }}"
-    jsnapy_validations_dir: "{{ jsnapy_run_parent_logdir }}/validations"
+    logs_parent_directory: "/home/ansible/Logs/RouterSoftwareUpgrade/{{ play_start_date }}_{{ play_start_time }}"
+    jsnapy_parent_log_dir: "{{ logs_parent_directory }}/jsnapy"
+    jsnapy_validations_dir: "{{ jsnapy_parent_log_dir }}/validations"
     jsnapy_validations_pre_dir: "{{ jsnapy_validations_dir }}/pre"
     jsnapy_validations_post_dir: "{{ jsnapy_validations_dir }}/post"
-    jsnapy_checks_dir: "{{ jsnapy_run_parent_logdir }}/checks"
+    jsnapy_checks_dir: "{{ jsnapy_parent_log_dir }}/checks"
     jsnapy_checks_pre_dir: "{{ jsnapy_checks_dir }}/pre"
     jsnapy_checks_post_dir: "{{ jsnapy_checks_dir }}/post"
     jsnapy_checks_compare_dir: "{{ jsnapy_checks_dir }}/compare"
-
+    log_plays_dir: "{{ logs_parent_directory }}/play"
+  # All Tasks
   tasks:
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # BLOCK A - Creates the required log directories.
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     - block:
-      when: not skip_play_for_host
         # Create the required log directories
         - name: Create the log directories
           file:
             path: "{{ item }}"
             state: directory
           loop:
-            - "{{ jsnapy_run_parent_logdir }}"
+            - "{{ logs_parent_directory }}"
             - "{{ jsnapy_validations_dir }}"
             - "{{ jsnapy_validations_pre_dir }}"
             - "{{ jsnapy_validations_post_dir }}"
@@ -48,54 +52,51 @@
             - "{{ jsnapy_checks_pre_dir }}"
             - "{{ jsnapy_checks_post_dir }}"
             - "{{ jsnapy_checks_compare_dir }}"
+            - "{{ log_plays_dir }}"
           delegate_to: localhost
           run_once: yes
       rescue:
-        # Alert user about abort of play as únable to set the date and time variables.
-        - import_tasks: tasks/common/display/message.yml
-        vars:
-          message_to_display: "Aborting the play for host {{ inventory_hostname }} as unable to create the required log directories."
-          message_task_name: "Message for aborting."
-        - import_task
+        # Alert user about abort of play as únable create log directories.
+        - import_tasks: tasks/common/action/abort.yml
+          vars:
+            abort_message: "Aborting the play for host {{ inventory_hostname }} as there was issue while creating log directories."
+            abort_task_name: "Issue in log directories creation."
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    # BLOCK A - This block gathers the router facts/info.
+    # BLOCK B - This block gathers the router facts/info.
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     - block:
       # Gather the router facts/info. No configuration data will be gathered.
       - import_tasks: tasks/juniper/facts/gather_facts_without_config.yml
+      rescue:
+        # Alert user about abort of play as únable gather the facts.
+        - import_tasks: tasks/common/action/abort.yml
+          vars:
+            abort_message: "Aborting the play for host {{ inventory_hostname }} as there was issue while gathering info/fácts about the device."
+            abort_task_name: "Issue in info/fact gathering."
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    # BLOCK B - Alert user of skipping the remaining playbook in case of single RE devices. 
-    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    - block:
-      # Print the abort message for single RE routers.
-      - import_tasks: tasks/common/display/message.yml 
-        vars:
-          message_to_display: "Aborting the play for host {{ inventory_hostname }} as it is single RE device. Remaining Tasks will get Skipped for this host."  
-          message_task_name: "Message for aborting in case of Single RE device"
+    # Abort and Alert user if Single RE device
+    - import_tasks: tasks/common/action/abort.yml
+      vars:
+        abort_message: "Aborting the play for host {{ inventory_hostname }} as it is single RE device."
+        abort_task_name: "for devices having single RE."
       when: not ansible_facts.junos.has_2RE
-    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
     
+    # Get the Master RE before RE Switchover
+    - name: Get the Master RE before RE Switchover
+      set_fact:
+        master_re_before_switchover: "{{ ansible_facts.junos.master }}"    
+
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # BLOCK C - Continue RE Swicthover process only for dual RE devices.
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     - block:
-      when: not skip_play_for_host and ansible_facts.junos.has_2RE
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       # BLOCK C-1 - Perform Pre, Post checks and validations and also RE Switchover
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       - block:
-        when: not skip_play_for_host
-        vars:
-          # These are the variables for full block.
-          jsnapy_test_files: [check_interface_status.yml, check_isis.yml, check_bgp.yml]
-          jsnapy_task_name: "interface, isis, bgp"
-          jsnapy_test_dir: "{{ jsnapy_parent_test_dir }}/checks/"
-
         # Validate the admin and oper status of both physical and logical interfaces to be up.
         - import_tasks: tasks/juniper/jsnapy/validations/validate.yml
           vars:
@@ -103,70 +104,97 @@
             jsnapy_task_name: "Interface(oper and admin) status to be up"
             jsnapy_test_dir: "{{ jsnapy_parent_test_dir }}/validations/"
             jsnapy_log_dir: "{{ jsnapy_validations_pre_dir }}"
+        
+        # Display Validation Results
+#        - name: display multiple file contents
+#          debug: 
+#            msg: "{{ item.split('\n') | replace('\\"', '\"') }}"
+#          with_file:
+#            - "{{ jsnapy_validations_pre_dir }}/{{ inventory_hostname }}.log"
 
         # Take Pre Snapshot based on Jsanpy test files
         - import_tasks: tasks/juniper/jsnapy/checks/pre/checks.yml          
           vars:
             jsnapy_log_dir: "{{ jsnapy_checks_pre_dir }}"
-        
-        #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        # BLOCK C-1-1 - Perform RE Switchover and wait for router connectivity
-        #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        - block:
-          when: not skip_play_for_host
-            # Perform RE Switchover
-#            - name: Performing RE switchover
-#              juniper_junos_command:
-#                command: "request chassis routing-engine master switch no-confirm"
-#                timeout: 500
-#              register: response_re_switchover
-#              failed_when: 
-#                - "'SessionCloseError: Unexpected session close' not in response_re_switchover.module_stderr"
-          rescue:
-            # Alert user about failed RE switchover.
-            - import_tasks: tasks/common/display/message.yml
-              vars:
-                message_to_display: "For host {{ inventory_hostname }} there was an issue in RE switchover. Unexpected response recieved."
-                message_task_name: "Message for issue in RE Switchover"
-
-        - block:
-          when: not skip_play_for_host
-            # Wait for router connectivity before continuing to next task.
-            - name: Waiting for connectivity to router again 
-              wait_for:  
-                host: "{{ inventory_hostname }}" 
-                port: 830  
-                timeout: 120
-          rescue:
-            # Alert user that device have not came back up.
-            - import_tasks: tasks/common/display/message.yml
-              vars:
-                message_to_display: "The host {{ inventory_hostname }} has not came up after the RE Switchover was attempted. Remaining tasks will get skipped."
-                message_task_name: "Message for lost connectivity to Device after RE Switchover"
-            # Set the fact [skip_play_for_host] to be used for skipping remaining tasks
-            - import_tasks: tasks/common/set/fact/skip_play_for_host.yml
-        #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        - block:
-          when: not skip_play_for_host
-            # Gather the router facts/info after. No configuration data will be gathered.
-            - import_tasks: tasks/juniper/facts/gather_facts_without_config.yml
-
-            # Take Post Snapshot of commands based on Jsanpy test files
-            - import_tasks: tasks/juniper/jsnapy/checks/post/checks.yml
-              vars:
-                jsnapy_log_dir: "{{ jsnapy_checks_post_dir }}"
-         
-            # Compare the Pre and Post Snapshots for any changes based on Jsanpy test files
-            - import_tasks: tasks/juniper/jsnapy/checks/compare/checks.yml
-              vars:
-                jsnapy_log_dir: "{{ jsnapy_checks_compare_dir }}"
-
-#        vars:
-#          # These are the variables for full block.
-#          jsnapy_test_files: [check_interface_status.yml, check_isis.yml, check_bgp.yml]
-#          #jsnapy_test_files: [check_bgp.yml]
-#          jsnapy_task_name: "interface, isis, bgp"
-#          jsnapy_test_dir: "{{ jsnapy_parent_test_dir }}/checks/" 
+            jsnapy_test_files: [check_interface_status.yml, check_isis.yml, check_bgp.yml]
+            jsnapy_task_name: "interface, isis, bgp"
+            jsnapy_test_dir: "{{ jsnapy_parent_test_dir }}/checks/"
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#      when: ansible_facts.junos.has_2RE
+        
+      #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      # BLOCK C-2 - Perform RE Switchover.
+      #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#      - block:
+#          # Perform RE Switchover
+#          - name: Performing RE switchover
+#            juniper_junos_command:
+#              command: "request chassis routing-engine master switch no-confirm"
+#              timeout: 500
+#            register: response_re_switchover
+#            failed_when: 
+#              - "'SessionCloseError: Unexpected session close' not in response_re_switchover.module_stderr"
+#        rescue:
+#          # Alert user about failed RE switchover.
+#          - import_tasks: tasks/common/display/message.yml
+#            vars:
+#              message_to_display: "For host {{ inventory_hostname }} there was an issue in RE switchover. Unexpected response recieved. Post checks and validations will continue."
+#              message_task_name: "Message for issue in RE Switchover"
+      #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      
+      #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      # BLOCK C-3 - Wait for router connectivity after RE Switchover.
+      #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      - block:
+          # Wait for router connectivity before continuing to next task.
+          - name: Waiting for connectivity to router again 
+            wait_for:
+              host: "{{ inventory_hostname }}"
+              port: 830  
+              timeout: 120
+        rescue:
+          # Alert and abort in case didn't showed up
+          - import_tasks: tasks/common/action/abort.yml
+            vars:
+              abort_message: "Aborting the play for host {{ inventory_hostname }} as it didn't showd up after the upgrade."
+              abort_task_name: "Device didn't showed up after RE Switchover."
+      #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     
+      #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      # BLOCK C-4 - Gather Facts again to see if RE Switchover was successfull.
+      #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      - block:
+          # Gather the router facts/info after. No configuration data will be gathered.
+          - import_tasks: tasks/juniper/facts/gather_facts_without_config.yml
+      #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+      - name: Get the Master RE after RE Switchover
+        set_fact:
+          master_re_after_switchover: "{{ ansible_facts.junos.master }}"
+
+
+      - name: Check if RE has changed
+        assert:
+          that:
+            - "master_re_after_switchover == master_re_before_switchover"
+            - "'RE' in master_re_after_switchover"
+          msg: "RE Switchover failed for device '{{ inventory_hostname }}'"
+
+      #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      # BLOCK C-5 - Gather Facts again to see if RE Switchover was successfull.
+      #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      - block: 
+          # Take Post Snapshot of commands based on Jsanpy test files
+          - import_tasks: tasks/juniper/jsnapy/checks/post/checks.yml
+            vars:
+              jsnapy_log_dir: "{{ jsnapy_checks_post_dir }}"
+         
+          # Compare the Pre and Post Snapshots for any changes based on Jsanpy test files
+          - import_tasks: tasks/juniper/jsnapy/checks/compare/checks.yml
+            vars:
+              jsnapy_log_dir: "{{ jsnapy_checks_compare_dir }}"
+      vars:
+          jsnapy_test_files: [check_interface_status.yml, check_isis.yml, check_bgp.yml]
+          jsnapy_task_name: "interface, isis, bgp"
+          jsnapy_test_dir: "{{ jsnapy_parent_test_dir }}/checks/" 
+      #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
