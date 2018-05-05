@@ -12,5 +12,5 @@ with open('/tmp/Touch_test_file.log', 'w') as f:
     f.write('Janmejay')
 
 
-sftp.put('/tmp/Touch_test_file.log', '/home/ansible/Logs/RouterSoftwareUpgrade/')
+isftp.put('/tmp/Touch_test_file.log', '/home/ansible/Logs/RouterSoftwareUpgrade/Touch_test_file.log')
 
