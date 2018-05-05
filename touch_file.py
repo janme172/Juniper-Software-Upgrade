@@ -11,6 +11,6 @@ f.close()
 with open('/tmp/Touch_test_file.log', 'w') as f:
     f.write('Janmejay')
 
-
-isftp.put('/tmp/Touch_test_file.log', '/home/ansible/Logs/RouterSoftwareUpgrade/Touch_test_file.log')
+#ftp = paramiko.SFTPClient.from_transport(transport)
+ftp.put('/tmp/Touch_test_file.log', '/home/ansible/Logs/RouterSoftwareUpgrade/Touch_test_file.log')
 
