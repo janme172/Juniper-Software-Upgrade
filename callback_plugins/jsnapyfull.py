@@ -111,7 +111,7 @@ class CallbackModule(CallbackBase):
                     all_pass_message = "All {0}. [{1} matched]".format(custom_message, passed_test_count)
                     self._display.display("\tPASS: {0}".format(all_pass_message), color='green')
                 else:
-                    tests_passed += 1
+                    tests_failed += 1
                     if test_operation.lower() == 'is-equal':
                         custom_message = "'{2}/{0}'s/es are not equal to '{1}'".format(node_name, expected_node_value, xpath)
                     elif test_operation.lower() == 'no-diff':
