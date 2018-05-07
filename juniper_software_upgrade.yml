@@ -20,8 +20,8 @@
 #            abort_message: "Aborting the play for host {{ inventory_hostname }} as unable to set date and time variables."
 #            abort_task_name: "Date and Time variables not set."
 # # Creating and setting some initial variables.
-#  vars:
-#    jsnapy_parent_test_dir: "jsnapy_tests"
+  vars:
+    jsnapy_parent_test_dir: "jsnapy_tests"
 #    logs_parent_directory: "/home/ansible/Logs/RouterSoftwareUpgrade/{{ play_start_date }}_{{ play_start_time }}"
 #    jsnapy_parent_log_dir: "{{ logs_parent_directory }}/jsnapy"
 #    jsnapy_validations_dir: "{{ jsnapy_parent_log_dir }}/validations"
@@ -97,13 +97,12 @@
       # BLOCK C-1 - Perform Pre, Post checks and validations and also RE Switchover
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       - block:
-        # Validate the admin and oper status of both physical and logical interfaces to be up.
         - import_tasks: tasks/juniper/jsnapy/validations/validate.yml
           vars:
             jsnapy_test_files: [validate_interface_status.yml]
             jsnapy_task_name: "Interface(oper and admin) status to be up"
             jsnapy_test_dir: "{{ jsnapy_parent_test_dir }}/validations/"
-            jsnapy_log_dir: "{{ jsnapy_validations_pre_dir }}"
+#            jsnapy_log_dir: "{{ jsnapy_validations_pre_dir }}"
         
         # Display Validation Results
 #        - name: display multiple file contents
@@ -115,7 +114,7 @@
         # Take Pre Snapshot based on Jsanpy test files
         - import_tasks: tasks/juniper/jsnapy/checks/pre/checks.yml          
           vars:
-            jsnapy_log_dir: "{{ jsnapy_checks_pre_dir }}"
+#            jsnapy_log_dir: "{{ jsnapy_checks_pre_dir }}"
             jsnapy_test_files: [check_interface_status.yml, check_isis.yml, check_bgp.yml]
             jsnapy_task_name: "interface, isis, bgp"
             jsnapy_test_dir: "{{ jsnapy_parent_test_dir }}/checks/"
@@ -182,16 +181,23 @@
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       # BLOCK C-5 - Gather Facts again to see if RE Switchover was successfull.
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-      - block: 
+      - block:
+
+          - import_tasks: tasks/juniper/jsnapy/validations/validate.yml
+            vars:
+              jsnapy_test_files: [validate_interface_status.yml]
+              jsnapy_task_name: "Interface(oper and admin) status to be up"
+              jsnapy_test_dir: "{{ jsnapy_parent_test_dir }}/validations/"
+ 
           # Take Post Snapshot of commands based on Jsanpy test files
           - import_tasks: tasks/juniper/jsnapy/checks/post/checks.yml
             vars:
-              jsnapy_log_dir: "{{ jsnapy_checks_post_dir }}"
+#              jsnapy_log_dir: "{{ jsnapy_checks_post_dir }}"
          
           # Compare the Pre and Post Snapshots for any changes based on Jsanpy test files
           - import_tasks: tasks/juniper/jsnapy/checks/compare/checks.yml
             vars:
-              jsnapy_log_dir: "{{ jsnapy_checks_compare_dir }}"
+#              jsnapy_log_dir: "{{ jsnapy_checks_compare_dir }}"
       vars:
           jsnapy_test_files: [check_interface_status.yml, check_isis.yml, check_bgp.yml]
           jsnapy_task_name: "interface, isis, bgp"
