@@ -163,6 +163,9 @@ Switch Style: {3}'''.format(serial_number, model, master_re, switch_style)
                response += 'Message: RE has changed successfully.'
             if task_status.upper().strip() == 'FAILED':
                response += 'Message: RE has not changed'
+        elif task_name.strip().strip('.') == 'Perform RE Switchover':
+            response += 'Message: Performing RE Switchover'
+            
         elif task_name.strip().strip('.').startswith('Compare PRE and POST Snapshots -') or task_name.strip().strip('.').startswith('Validate -'):
             if task_status.upper().strip() == 'OK':
                 host = task_dict['device']

@@ -9,58 +9,58 @@
     - Juniper.junos
   # Pre configurations tasks
   # Commented because logging is still pending.
-  pre_tasks:
-    - block:
-        # Set the Start of play date and time variables
-        - import_tasks: tasks/common/set/fact/start_date_and_time.yml
-      rescue:
-        # Alert user about abort of play as únable to set the date and time variables.
-        - import_tasks: tasks/common/action/abort.yml
-          vars:
-            abort_message: "Aborting the play for host {{ inventory_hostname }} as unable to set date and time variables."
-            abort_task_name: "Date and Time variables not set."
- # Creating and setting some initial variables.
-  vars:
-    jsnapy_parent_test_dir: "jsnapy_tests"
-    logs_parent_directory: "/home/ansible/Logs/RouterSoftwareUpgrade/{{ play_start_date }}_{{ play_start_time }}"
-    jsnapy_parent_log_dir: "{{ logs_parent_directory }}/jsnapy"
-    jsnapy_validations_dir: "{{ jsnapy_parent_log_dir }}/validations"
-    jsnapy_validations_pre_dir: "{{ jsnapy_validations_dir }}/pre"
-    jsnapy_validations_post_dir: "{{ jsnapy_validations_dir }}/post"
-    jsnapy_checks_dir: "{{ jsnapy_parent_log_dir }}/checks"
-    jsnapy_checks_pre_dir: "{{ jsnapy_checks_dir }}/pre"
-    jsnapy_checks_post_dir: "{{ jsnapy_checks_dir }}/post"
-    jsnapy_checks_compare_dir: "{{ jsnapy_checks_dir }}/compare"
-    log_plays_dir: "{{ logs_parent_directory }}/play"
+#  pre_tasks:
+#    - block:
+#        # Set the Start of play date and time variables
+#        - import_tasks: tasks/common/set/fact/start_date_and_time.yml
+#      rescue:
+#        # Alert user about abort of play as únable to set the date and time variables.
+#        - import_tasks: tasks/common/action/abort.yml
+#          vars:
+#            abort_message: "Aborting the play for host {{ inventory_hostname }} as unable to set date and time variables."
+#            abort_task_name: "Date and Time variables not set."
+# # Creating and setting some initial variables.
+#  vars:
+#    jsnapy_parent_test_dir: "jsnapy_tests"
+#    logs_parent_directory: "/home/ansible/Logs/RouterSoftwareUpgrade/{{ play_start_date }}_{{ play_start_time }}"
+#    jsnapy_parent_log_dir: "{{ logs_parent_directory }}/jsnapy"
+#    jsnapy_validations_dir: "{{ jsnapy_parent_log_dir }}/validations"
+#    jsnapy_validations_pre_dir: "{{ jsnapy_validations_dir }}/pre"
+#    jsnapy_validations_post_dir: "{{ jsnapy_validations_dir }}/post"
+#    jsnapy_checks_dir: "{{ jsnapy_parent_log_dir }}/checks"
+#    jsnapy_checks_pre_dir: "{{ jsnapy_checks_dir }}/pre"
+#    jsnapy_checks_post_dir: "{{ jsnapy_checks_dir }}/post"
+#    jsnapy_checks_compare_dir: "{{ jsnapy_checks_dir }}/compare"
+#    log_plays_dir: "{{ logs_parent_directory }}/play"
   # All Tasks
   tasks:
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     # BLOCK A - Creates the required log directories.
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    - block:
-        # Create the required log directories
-        - name: Create the log directories
-          file:
-            path: "{{ item }}"
-            state: directory
-          loop:
-            - "{{ logs_parent_directory }}"
-            - "{{ jsnapy_validations_dir }}"
-            - "{{ jsnapy_validations_pre_dir }}"
-            - "{{ jsnapy_validations_post_dir }}"
-            - "{{ jsnapy_checks_dir }}"
-            - "{{ jsnapy_checks_pre_dir }}"
-            - "{{ jsnapy_checks_post_dir }}"
-            - "{{ jsnapy_checks_compare_dir }}"
-            - "{{ log_plays_dir }}"
-          delegate_to: localhost
-          run_once: yes
-      rescue:
-        # Alert user about abort of play as únable create log directories.
-        - import_tasks: tasks/common/action/abort.yml
-          vars:
-            abort_message: "Aborting the play for host {{ inventory_hostname }} as there was issue while creating log directories."
-            abort_task_name: "Issue in log directories creation."
+#    - block:
+#        # Create the required log directories
+#        - name: Create the log directories
+#          file:
+#            path: "{{ item }}"
+#            state: directory
+#          loop:
+#            - "{{ logs_parent_directory }}"
+#            - "{{ jsnapy_validations_dir }}"
+#            - "{{ jsnapy_validations_pre_dir }}"
+#            - "{{ jsnapy_validations_post_dir }}"
+#            - "{{ jsnapy_checks_dir }}"
+#            - "{{ jsnapy_checks_pre_dir }}"
+#            - "{{ jsnapy_checks_post_dir }}"
+#            - "{{ jsnapy_checks_compare_dir }}"
+#            - "{{ log_plays_dir }}"
+#          delegate_to: localhost
+#          run_once: yes
+#      rescue:
+#        # Alert user about abort of play as únable create log directories.
+#        - import_tasks: tasks/common/action/abort.yml
+#          vars:
+#            abort_message: "Aborting the play for host {{ inventory_hostname }} as there was issue while creating log directories."
+#            abort_task_name: "Issue in log directories creation."
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -124,21 +124,21 @@
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       # BLOCK C-2 - Perform RE Switchover.
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#      - block:
-#          # Perform RE Switchover
-#          - name: Performing RE switchover
-#            juniper_junos_command:
-#              command: "request chassis routing-engine master switch no-confirm"
-#              timeout: 500
-#            register: response_re_switchover
-#            failed_when: 
-#              - "'SessionCloseError: Unexpected session close' not in response_re_switchover.module_stderr"
-#        rescue:
-#          # Alert user about failed RE switchover.
-#          - import_tasks: tasks/common/display/message.yml
-#            vars:
-#              message_to_display: "For host {{ inventory_hostname }} there was an issue in RE switchover. Unexpected response recieved. Post checks and validations will continue."
-#              message_task_name: "Message for issue in RE Switchover"
+      - block:
+          # Perform RE Switchover
+          - name: Perform RE Switchover
+            juniper_junos_command:
+              command: "request chassis routing-engine master switch no-confirm"
+              timeout: 500
+            register: response_re_switchover
+            failed_when: 
+              - "'SessionCloseError: Unexpected session close' not in response_re_switchover.module_stderr"
+        rescue:
+          # Alert user about failed RE switchover.
+          - import_tasks: tasks/common/display/message.yml
+            vars:
+              message_to_display: "For host {{ inventory_hostname }} there was an issue in RE switchover. Unexpected response recieved. Post checks and validations will continue."
+              message_task_name: "Message for issue in RE Switchover"
       #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       
       #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -175,7 +175,7 @@
       - name: Check if RE has changed
         assert:
           that:
-            - "master_re_after_switchover == master_re_before_switchover"
+            - "master_re_after_switchover != master_re_before_switchover"
             - "'RE' in master_re_after_switchover"
           msg: "RE Switchover failed for device '{{ inventory_hostname }}'"
 
